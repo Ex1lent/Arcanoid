@@ -14,8 +14,7 @@ s_prev = ""
 def detectcolors(img, colors1):
     # color part ||||||||||||||||||||||||||||||||||||||
     x_ball, y_ball = None, None
-    x_paddle, y_paddle = None, None
-    global s, s_prev
+
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lower1 = np.array([colors1[0], colors1[2], colors1[4]])
     upper1 = np.array([colors1[1], colors1[3], colors1[5]])
@@ -54,8 +53,11 @@ def detectcolors(img, colors1):
     y = (final_array[0][1] + final_array[2][1]) // 2
     cv2.putText(img, str(ids[0][0]), [x, y], 2, 1, (0, 255, 0), 1, cv2.LINE_AA)
     img = cv2.circle(img, (x, y), radius=2, color=(255, 0, 0), thickness=3)
-    cv2.line(img, [x_ball, y_ball], [x_ball, y], (255, 100, 0), thickness=2)
-    cv2.line(img, [x, y], [x_ball, y], (255, 100, 0), thickness=2)
+    if x_ball is not None and y_ball is not None:
+        cv2.line(img, [x_ball, y_ball], [x_ball, y], (255, 100, 0), thickness=2)
+        cv2.line(img, [x, y], [x_ball, y], (255, 100, 0), thickness=2)
+    else:
+        cv2.rectangle(img, [0, 0], [15, 15], (0, 0, 0), thickness=15)
 
     # показ картинки
     cv2.imshow("Testing...", img)
