@@ -33,8 +33,9 @@ void loop() {
     byte ind = s.indexOf(',');
     String s1 = s.substring(0,ind);
     String s2 = s.substring(ind+1,s.length());
-    int m = s1.toInt();
-    int h = s2.toInt();
+    int x = s1.toInt();
+    int x_ball = s2.toInt();
+    int
     regulator.setpoint = 50;
 
   }
