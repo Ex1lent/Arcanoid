@@ -9,10 +9,10 @@ def empty(x):
 
 # original_img = cv2.imread("car_lamborgini.jpg")
 # original_img = cv2.imread("1.jpg")
-# img1 = cv2.VideoCapture(1)
-img1 = cv2.imread('pics/test1.jpg')
-# succ, original_img = img1.read()
-original_img = cv2.flip(img1, flipCode=1)
+img1 = cv2.VideoCapture(1)
+# img1 = cv2.imread('pics/test1.jpg')
+succ, original_img = img1.read()
+original_img = cv2.flip(original_img, flipCode=1)
 
 hsv_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2HSV)
 
