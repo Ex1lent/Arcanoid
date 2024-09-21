@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 # import serial
 import time
+import serial
 
-# arduinoSerial = serial.Serial('COM8', 9600)
+arduinoSerial = serial.Serial('COM8', 9600)
 time.sleep(2)
 # cap = cv2.VideoCapture(1)
 color_ball = [0, 9, 200, 255, 200, 255]
@@ -14,6 +15,8 @@ s_prev = ""
 def detectcolors(img, colors1):
     # color part ||||||||||||||||||||||||||||||||||||||
     x_ball, y_ball = None, None
+    global s, s_prev
+    s_prev = s
 
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lower1 = np.array([colors1[0], colors1[2], colors1[4]])
@@ -51,13 +54,22 @@ def detectcolors(img, colors1):
     # рассчет координат
     x = (final_array[0][0] + final_array[2][0]) // 2
     y = (final_array[0][1] + final_array[2][1]) // 2
-    cv2.putText(img, str(ids[0][0]), [x, y], 2, 1, (0, 255, 0), 1, cv2.LINE_AA)
+    cv2.putText(img, str(x) + ',' + str(y), [x, y], 2, 1, (0, 255, 0), 1, cv2.LINE_AA)
     img = cv2.circle(img, (x, y), radius=2, color=(255, 0, 0), thickness=3)
     if x_ball is not None and y_ball is not None:
         cv2.line(img, [x_ball, y_ball], [x_ball, y], (255, 100, 0), thickness=2)
         cv2.line(img, [x, y], [x_ball, y], (255, 100, 0), thickness=2)
     else:
         cv2.rectangle(img, [0, 0], [15, 15], (0, 0, 0), thickness=15)
+
+    # отправка на ардуино x aruco - x ball
+    if x_ball is not None and y_ball is not None:
+        s = '{0},{1}\n'.format(str(x), str(x_ball))
+    else:
+        s = '0,0\n'
+    if s != s_prev:
+        arduinoSerial.write(s.encode())
+    s_prev = s
 
     # показ картинки
     cv2.imshow("Testing...", img)
