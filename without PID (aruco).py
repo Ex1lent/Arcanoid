@@ -88,7 +88,7 @@ def detectcolors(img, colors1):
     else:
         cv2.rectangle(img, [0, 0], [15, 15], (0, 0, 0), thickness=15)
 
-    if s != s_prev and time.time() - t1 > 0.2:
+    if s != s_prev and time.time() - t1 > 0.1:
         t1 = time.time()
         arduinoSerial.write(s.encode())
         print(s)

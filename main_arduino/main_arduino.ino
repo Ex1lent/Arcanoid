@@ -9,14 +9,14 @@
 
 #include "GyverPID.h"
 
-GyverPID regulator(0.1, 0.05, 0.01, 10);
+GyverPID regulator(0.5, 0.001, 0,  100);
 
 
 unsigned long t1;
 
 void setup() {
   Serial.begin(9600);
-  regulator.setLimits(0, 255);
+  regulator.setLimits(0, 80);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
@@ -35,11 +35,21 @@ void loop() {
     int x = s2.toInt();
     int x_ball = s3.toInt();
     int punch = s1.toInt();
-    if (x_ball > x) {
-      Motor(-40);
+    regulator.setpoint = x_ball;
+    regulator.input = x;
+
+    if (x_ball - 20 > x) {
+      regulator.setDirection(NORMAL);
+      regulator.getResult();
+      Motor(regulator.output);
+    } else if (x_ball + 20 < x){
+      regulator.setDirection(REVERSE);
+      regulator.getResult();
+      Motor(-regulator.output);
     } else {
-      Motor(40);
+      Motor(0);
     }
+    
   }
 }
 
@@ -47,11 +57,15 @@ void Motor(int speed1){
   int dir1 = 0;
   int dir2 = 0;
   if (speed1 <= 0){
-     dir1 = 0;
-     dir2 = 1;
-  } else {
      dir1 = 1;
      dir2 = 0;
+  } else {
+     dir1 = 0;
+     dir2 = 1;
+  }
+  if (speed1 == 0){
+    dir1 = 0;
+    dir2 = 0;
   }
   digitalWrite(DIR_DRIVE_1, dir1); 
   digitalWrite(DIR_DRIVE_2, dir2); 
