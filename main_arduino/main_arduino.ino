@@ -9,10 +9,11 @@
 
 #include "GyverPID.h"
 
-GyverPID regulator(0.5, 0.001, 0,  100);
+unsigned long time1;
+bool switcher = 0;
 
-
-unsigned long t1;
+//GyverPID regulator(0.5, 0.001, 0,  100);
+GyverPID regulator(0.5, 0.001, 0.001,  100);
 
 void setup() {
   Serial.begin(9600);
@@ -50,6 +51,17 @@ void loop() {
       Motor(0);
     }
     
+    if (punch == 1 && switcher == 0){
+      PunchMotor(100);
+      time1 = millis();
+      switcher = 1;
+    }
+    if (millis() - time1 > 500 && switcher == 1){
+      PunchMotor(-20);
+      delay(100);
+      PunchMotor(0);
+      switcher = 0;
+    } 
   }
 }
 
@@ -72,4 +84,25 @@ void Motor(int speed1){
   speed1 = abs(speed1);
   speed1 = constrain(speed1, 0, 255);
   analogWrite(SPEED_DRIVE, speed1);
+}
+
+void PunchMotor(int speed2){
+  int dir1_1 = 0;
+  int dir2_1 = 0;
+  if (speed2 <= 0){
+     dir1_1 = 1;
+     dir2_1 = 0;
+  } else {
+     dir1_1 = 0;
+     dir2_1 = 1;
+  }
+  if (speed2 == 0){
+    dir1_1 = 0;
+    dir2_1 = 0;
+  }
+  digitalWrite(DIR_PUNCH_1, dir1_1);
+  digitalWrite(DIR_PUNCH_2, dir2_1);
+  speed1 = abs(speed2);
+  speed1 = constrain(speed2, 0, 255);
+  analogWrite(SPEED_PUNCH, speed2);
 }
