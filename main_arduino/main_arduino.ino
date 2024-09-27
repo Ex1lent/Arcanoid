@@ -13,11 +13,11 @@ unsigned long time1;
 bool switcher = 0;
 
 //GyverPID regulator(0.5, 0.001, 0,  100);
-GyverPID regulator(0.5, 0.001, 0.001,  100);
+GyverPID regulator(0.1, 0.001, 0.001,  100);
 
 void setup() {
   Serial.begin(9600);
-  regulator.setLimits(0, 80);
+  regulator.setLimits(-100, 100);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
