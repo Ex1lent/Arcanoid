@@ -29,13 +29,6 @@ def detectcolors(img, colors1):
     y_m1 = moments1['m01']
     area1 = moments1['m00']
 
-    if area1 > 10:
-        x_ball = int(x_m1 / area1)
-        y_ball = int(y_m1 / area1)
-        cv2.putText(img, 'x:'+ str(x_ball) + ' ' + 'y:' + str(y_ball), (x_ball, y_ball), \
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
-    img = cv2.circle(img, (x_ball, y_ball), radius=2, color=(255, 0, 0), thickness=3)
-
     # arUco part |||||||||||||||||||||||||||||||||||||||
     imgAruco = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -57,15 +50,21 @@ def detectcolors(img, colors1):
         # рассчет координат
         x = (final_array[0][0] + final_array[2][0]) // 2
         y = (final_array[0][1] + final_array[2][1]) // 2
-        cv2.putText(img, 'x:'+ str(x) + ' ' + 'y:' + str(y), [x, y], 2, 1, (0, 255, 0), 1, cv2.LINE_AA)
+        cv2.putText(img, 'x:' + str(x) + ' ' + 'y:' + str(y), [x, y], 2, 1, (0, 255, 0), 1)
         img = cv2.circle(img, (x, y), radius=2, color=(255, 0, 0), thickness=3)
-
     except:
         print('No aruco')
         x = None
         y = None
 
+    # вывод шарика
+    if area1 > 10:
+        x_ball = int(x_m1 / area1)
+        y_ball = int(y_m1 / area1)
+        cv2.putText(img, 'x:' + str(x_ball) + ' ' + 'y:' + str(y_ball), (x_ball, y_ball), 2, 1, (0, 255, 255), 1)
+        img = cv2.circle(img, (x_ball, y_ball), radius=2, color=(255, 0, 0), thickness=3)
 
+    # основные рассчеты и отправка на ардуинку
     if x_ball is not None and y_ball is not None and x is not None and y is not None:
 
         cv2.line(img, [x_ball, y_ball], [x_ball, y], (255, 100, 0), thickness=2)
@@ -97,9 +96,10 @@ def detectcolors(img, colors1):
     # показ картинки
     cv2.imshow("Testing...", img)
 
+
 while True:
     success, image = cap.read()
-    #image = cv2.flip(image, flipCode=0)
+    # image = cv2.flip(image, flipCode=0)
     # image = cv2.imread('pics/test1.jpg')
     detectcolors(image, color_ball)
     # cv2.imshow("result", img)
