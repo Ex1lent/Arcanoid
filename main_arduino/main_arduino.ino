@@ -13,11 +13,11 @@ unsigned long time1;
 bool switcher = 0;
 
 //GyverPID regulator(0.5, 0.001, 0,  100);
-GyverPID regulator(0.1, 0.001, 0.001,  100);
+GyverPID regulator(0.7, 0.5, 0.1,  100);
 
 void setup() {
   Serial.begin(9600);
-  regulator.setLimits(-100, 100);
+  regulator.setLimits(-70, 70);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
@@ -39,29 +39,38 @@ void loop() {
     regulator.setpoint = x_ball;
     regulator.input = x;
 
-    if (x_ball - 20 > x) {
+    if (x == 0 and x_ball == 0){
+      Motor(0);
+      delay(5);
+    } else {
       regulator.setDirection(NORMAL);
       regulator.getResult();
       Motor(regulator.output);
-    } else if (x_ball + 20 < x){
-      regulator.setDirection(REVERSE);
-      regulator.getResult();
-      Motor(-regulator.output);
-    } else {
-      Motor(0);
+      // if (x_ball - 10 > x) {
+      // regulator.setDirection(NORMAL);
+      // regulator.getResult();
+      // Motor(regulator.output);
+      // } else if (x_ball + 10 < x){
+      //   regulator.setDirection(REVERSE);
+      //   regulator.getResult();
+      //   Motor(-regulator.output);
+      // } else {
+      //   Motor(0);
+      // }
+      
+      if (punch == 1 && switcher == 0){
+        PunchMotor(80);
+        time1 = millis();
+        switcher = 1;
+      }
+      if (millis() - time1 > 500 && switcher == 1){
+        PunchMotor(-20);
+        delay(100);
+        PunchMotor(0);
+        switcher = 0;
+      } 
     }
     
-    if (punch == 1 && switcher == 0){
-      PunchMotor(100);
-      time1 = millis();
-      switcher = 1;
-    }
-    if (millis() - time1 > 500 && switcher == 1){
-      PunchMotor(-20);
-      delay(100);
-      PunchMotor(0);
-      switcher = 0;
-    } 
   }
 }
 
@@ -102,7 +111,7 @@ void PunchMotor(int speed2){
   }
   digitalWrite(DIR_PUNCH_1, dir1_1);
   digitalWrite(DIR_PUNCH_2, dir2_1);
-  speed1 = abs(speed2);
-  speed1 = constrain(speed2, 0, 255);
+  speed2 = abs(speed2);
+  speed2 = constrain(speed2, 0, 255);
   analogWrite(SPEED_PUNCH, speed2);
 }

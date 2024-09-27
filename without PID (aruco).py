@@ -1,8 +1,11 @@
 import cv2
 import numpy as np
-# import serial
 import time
 import serial
+import matplotlib.pyplot as plt
+
+plt.axis([0, 100, 0, 1000])
+
 
 arduinoSerial = serial.Serial('COM5', 9600)
 time.sleep(1)
@@ -12,10 +15,9 @@ s = ""
 s_prev = ""
 t1 = 0
 
-
 def detectcolors(img, colors1):
     # color part ||||||||||||||||||||||||||||||||||||||
-    x_ball, y_ball = None, None
+    x_ball, y_ball, x, y = None, None, None, None
     global s, s_prev, t1
     s_prev = s
 
@@ -86,6 +88,11 @@ def detectcolors(img, colors1):
         # print(s)
     else:
         cv2.rectangle(img, [0, 0], [15, 15], (0, 0, 0), thickness=15)
+        s = '0,0;0\n'
+        if time.time() - t1 > 0.1:
+            t1 = time.time()
+            arduinoSerial.write(s.encode())
+            print(s)
 
     if s != s_prev and time.time() - t1 > 0.1:
         t1 = time.time()
