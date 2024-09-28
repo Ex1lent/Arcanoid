@@ -13,12 +13,14 @@ unsigned long time1;
 bool switcher = 0;
 
 //GyverPID regulator(0.5, 0.001, 0,  100);
-GyverPID regulator(2, 2, 0.4,  100);
+// 2.5 2 0.8
+const float Pi = 2.5, Ii = 2, Di = 0.8;
+GyverPID regulator_plus(Pi, Ii, Di,  100);
 
 void setup() {
   Serial.begin(9600);
-  Serial.setTimeout(100);
-  regulator.setLimits(-80, 80);
+  Serial.setTimeout(50);
+  regulator_plus.setLimits(-120, 120);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
@@ -40,15 +42,17 @@ void loop() {
     x = s2.toInt();
     x_ball = s3.toInt();
     punch = s1.toInt();
-    regulator.setpoint = x_ball;
-    regulator.input = x;
+    regulator_plus.setpoint = x_ball;
+    regulator_plus.input = x;
 
     if (x == 0 and x_ball == 0){
       Motor(0);
     } else {
-      regulator.setDirection(NORMAL);
-      regulator.getResult();
-      Motor(regulator.output); 
+      regulator_plus.setDirection(NORMAL);
+      regulator_plus.getResult();
+      //if (abs(regulator_plus.output) > 40){
+        Motor(regulator_plus.output); 
+      //}
     }
   }
   if (punch == 1 && switcher == 0){
