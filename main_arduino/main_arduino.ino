@@ -13,18 +13,22 @@ unsigned long time1;
 bool switcher = 0;
 
 //GyverPID regulator(0.5, 0.001, 0,  100);
-GyverPID regulator(0.7, 0.5, 0.1,  100);
+GyverPID regulator(2, 2, 0.4,  100);
 
 void setup() {
   Serial.begin(9600);
-  regulator.setLimits(-70, 70);
+  Serial.setTimeout(100);
+  regulator.setLimits(-80, 80);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
-
+  pinMode(DIR_PUNCH_1, OUTPUT);
+  pinMode(DIR_PUNCH_2, OUTPUT);
+  pinMode(SPEED_PUNCH, OUTPUT);
 }
 
 void loop() {
+  int x, x_ball, punch;
   if (Serial.available()>0){
     String s = Serial.readStringUntil('\n');
     Serial.println(s);
@@ -33,45 +37,31 @@ void loop() {
     String s1 = s.substring(0,ind);
     String s2 = s.substring(ind+1,ind1);
     String s3 = s.substring(ind1+1,s.length());
-    int x = s2.toInt();
-    int x_ball = s3.toInt();
-    int punch = s1.toInt();
+    x = s2.toInt();
+    x_ball = s3.toInt();
+    punch = s1.toInt();
     regulator.setpoint = x_ball;
     regulator.input = x;
 
     if (x == 0 and x_ball == 0){
       Motor(0);
-      delay(5);
     } else {
       regulator.setDirection(NORMAL);
       regulator.getResult();
-      Motor(regulator.output);
-      // if (x_ball - 10 > x) {
-      // regulator.setDirection(NORMAL);
-      // regulator.getResult();
-      // Motor(regulator.output);
-      // } else if (x_ball + 10 < x){
-      //   regulator.setDirection(REVERSE);
-      //   regulator.getResult();
-      //   Motor(-regulator.output);
-      // } else {
-      //   Motor(0);
-      // }
-      
-      if (punch == 1 && switcher == 0){
-        PunchMotor(80);
-        time1 = millis();
-        switcher = 1;
-      }
-      if (millis() - time1 > 500 && switcher == 1){
-        PunchMotor(-20);
-        delay(100);
-        PunchMotor(0);
-        switcher = 0;
-      } 
+      Motor(regulator.output); 
     }
-    
   }
+  if (punch == 1 && switcher == 0){
+    PunchMotor(255);
+    time1 = millis();
+    switcher = 1;
+  }
+  if (millis() - time1 > 500 && switcher == 1){
+    PunchMotor(-50);
+    delay(10);
+    PunchMotor(0);
+    switcher = 0;
+  } 
 }
 
 void Motor(int speed1){

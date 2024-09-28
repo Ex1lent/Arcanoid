@@ -74,13 +74,13 @@ def detectcolors(img, colors1):
 
         # отправка на ардуино x aruco - x ball
         if x_ball is not None and y_ball is not None:
-            if abs(y - y_ball) < 100:
+            if abs(y - y_ball) < 50:
                 s = '1,'
             else:
                 s = '0,'
             s += '{0};{1}\n'.format(str(x), str(x_ball))
         else:
-            if abs(y - y_ball) < 100:
+            if abs(y - y_ball) < 50:
                 s = '1,'
             else:
                 s = '0,'
