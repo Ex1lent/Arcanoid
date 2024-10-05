@@ -14,13 +14,13 @@ bool switcher = 0;
 
 //GyverPID regulator(0.5, 0.001, 0,  100);
 // 2.5 2 0.8
-const float Pi = 2.5, Ii = 2, Di = 0.8;
+const float Pi = 1.5, Ii = 1.7, Di = 0.8; // 1.5, Ii = 2, Di = 0.8; 150 good | 
 GyverPID regulator_plus(Pi, Ii, Di,  100);
 
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(50);
-  regulator_plus.setLimits(-120, 120);
+  regulator_plus.setLimits(-150, 150);
   pinMode(DIR_DRIVE_1, OUTPUT);
   pinMode(DIR_DRIVE_2, OUTPUT);
   pinMode(SPEED_DRIVE, OUTPUT);
@@ -85,7 +85,7 @@ void Motor(int speed1){
   digitalWrite(DIR_DRIVE_1, dir1); 
   digitalWrite(DIR_DRIVE_2, dir2); 
   speed1 = abs(speed1);
-  speed1 = constrain(speed1, 0, 255);
+  speed1 = constrain(speed1, 50, 255);
   analogWrite(SPEED_DRIVE, speed1);
 }
 
