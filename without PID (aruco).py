@@ -34,7 +34,7 @@ def detectcolors(img, colors1):
     # arUco part |||||||||||||||||||||||||||||||||||||||
     imgAruco = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_100)
+    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
     parameters_ = cv2.aruco.DetectorParameters()
     det = cv2.aruco.ArucoDetector(dictionary, parameters_)
     corners, ids, _ = det.detectMarkers(img)
