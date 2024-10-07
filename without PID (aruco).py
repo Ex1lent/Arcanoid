@@ -4,14 +4,14 @@ import time
 import serial
 
 
-arduinoSerial = serial.Serial('COM5', 9600, timeout=2)
 cap = cv2.VideoCapture(0)
 color_ball = [0, 9, 120, 192, 141, 255]
 s = ""
 s_prev = ""
 t1 = 0
 
-def portIsUsable(portName):
+
+def portisusable(portName):
     global arduinoSerial
     try:
        arduinoSerial = serial.Serial(port=portName)
@@ -110,17 +110,15 @@ def detectcolors(img, colors1):
 
 
 while True:
-    try:
-        success, image = cap.read()
-        print(portIsUsable('COM5'))
-        if portIsUsable('COM5'):
-            # image = cv2.flip(image, flipCode=0)
-            # image = cv2.imread('pics/test1.jpg')
-            detectcolors(image, color_ball)
-            cv2.imshow("1", image)
-            cv2.waitKey(1)
-    except serial.serialutil.SerialException:
-        print("exc")
-        cv2.destroyAllWindows()
+    success, image = cap.read()
+    print(1)
+    if portisusable('COM5'):
+        # image = cv2.flip(image, flipCode=0)
+        # image = cv2.imread('pics/test1.jpg')
+        detectcolors(image, color_ball)
+        cv2.imshow("1", image)
+        cv2.waitKey(1)
+    else:
+        print(0)
 
 
