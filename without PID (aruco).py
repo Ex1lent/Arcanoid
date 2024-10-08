@@ -2,22 +2,18 @@ import cv2
 import numpy as np
 import time
 import serial
+import matplotlib.pyplot as plt
+
+plt.axis([0, 100, 0, 1000])
 
 
-cap = cv2.VideoCapture(0)
+# arduinoSerial = serial.Serial('COM5', 9600)
+time.sleep(1)
+cap = cv2.VideoCapture(1)
 color_ball = [0, 9, 120, 192, 141, 255]
 s = ""
 s_prev = ""
 t1 = 0
-
-
-def portisusable(portName):
-    global arduinoSerial
-    try:
-       arduinoSerial = serial.Serial(port=portName)
-       return True
-    except:
-       return False
 
 
 def detectcolors(img, colors1):
@@ -39,7 +35,7 @@ def detectcolors(img, colors1):
     # arUco part |||||||||||||||||||||||||||||||||||||||
     imgAruco = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_100)
+    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
     parameters_ = cv2.aruco.DetectorParameters()
     det = cv2.aruco.ArucoDetector(dictionary, parameters_)
     corners, ids, _ = det.detectMarkers(img)
@@ -110,15 +106,18 @@ def detectcolors(img, colors1):
 
 
 while True:
-    success, image = cap.read()
-    print(1)
-    if portisusable('COM5'):
-        # image = cv2.flip(image, flipCode=0)
-        # image = cv2.imread('pics/test1.jpg')
-        detectcolors(image, color_ball)
-        cv2.imshow("1", image)
-        cv2.waitKey(1)
-    else:
-        print(0)
-
+    try:
+        arduinoSerial = serial.Serial('COM5', 9600)
+        time.sleep(1)
+        while True:
+            success, image = cap.read()
+            # image = cv2.flip(image, flipCode=0)
+            # image = cv2.imread('pics/test1.jpg')
+            detectcolors(image, color_ball)
+            # cv2.imshow("result", img)
+            cv2.waitKey(1)
+        cap.release()
+        cv2.destroyAllWindows()
+    except serial.SerialException:
+        print("Exception")
 
