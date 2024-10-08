@@ -2,12 +2,8 @@ import cv2
 import numpy as np
 import time
 import serial
-import matplotlib.pyplot as plt
-
-plt.axis([0, 100, 0, 1000])
 
 
-# arduinoSerial = serial.Serial('COM5', 9600)
 time.sleep(1)
 cap = cv2.VideoCapture(1)
 color_ball = [0, 9, 120, 192, 141, 255]
@@ -114,7 +110,6 @@ while True:
             # image = cv2.flip(image, flipCode=0)
             # image = cv2.imread('pics/test1.jpg')
             detectcolors(image, color_ball)
-            # cv2.imshow("result", img)
             cv2.waitKey(1)
         cap.release()
         cv2.destroyAllWindows()
